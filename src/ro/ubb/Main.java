@@ -11,8 +11,17 @@ import java.util.stream.IntStream;
 public class Main {
 
   final static int MAIN_PROCESS = 0;
-
   public static final int SIZE = 4;
+
+
+  final static List<Integer>  directions=new ArrayList<>();
+  static {
+    directions.add(-1);
+    directions.add(1);
+    directions.add(-SIZE);
+    directions.add(SIZE);
+  }
+
 
   public static void main(String[] args) {
     MPI.Init(args);
@@ -32,7 +41,7 @@ public class Main {
     List<Integer> goalBoard = IntStream.range(1, Main.SIZE * Main.SIZE).boxed().collect(Collectors.toList());
 
     if(me == MAIN_PROCESS) {
-      puzzleSolver(initialBoard,goalBoard,size);
+      puzzleSolver(initialBoard,size);
     }
     else{
       puzzleSolverWorker();
@@ -41,13 +50,35 @@ public class Main {
     MPI.Finalize();
   }
 
-  private static void puzzleSolver(List<Integer> initialBoard, List<Integer> goalBoard, int totalNumberOfProcesses) {
+  private static void puzzleSolver(List<Integer> initialBoard, int totalNumberOfProcesses) {
     int numberOfWorkers = totalNumberOfProcesses - 1;
+    int expanded = 0;
     PriorityQueue<List<Integer>> priorityQueue = new PriorityQueue<>();
+    while(true) {
+        if (expanded % 10000 == 0) {
+            if (handleTick()) {
+                return;
+            }
+        }
+        expanded++;
+        boolean notFinished=true;
+        while(notFinished) {
+            //TODO MPI RECEIVE
+            if(notFinished==true){
+                notFinished=false;
+            }
+            priorityQueue.add()
+        }
+
+    }
 
   }
 
-  private static void puzzleSolverWorker() {
+    private static boolean handleTick() {
+      return false;
+    }
+
+    private static void puzzleSolverWorker() {
 
   }
 }
