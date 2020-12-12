@@ -2,35 +2,52 @@ package ro.ubb;
 
 import mpi.MPI;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.PriorityQueue;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
 public class Main {
 
+  final static int MAIN_PROCESS = 0;
+
+  public static final int SIZE = 4;
+
   public static void main(String[] args) {
-    int rank, size, i;
-    double pi125dt = 3.141592653589793238462643;
-    double h, sum, x;
     MPI.Init(args);
-    size = MPI.COMM_WORLD.Size();
-    rank = MPI.COMM_WORLD.Rank();
-    int[] n = new int[1];
-    double[] mypi = new double[1];
-    double[] pi = new double[1];
+    int size = MPI.COMM_WORLD.Size();
+    int me = MPI.COMM_WORLD.Rank();
 
-    if (rank == 0)
-      n[0] = 1000000; // number of intervals
+    List<Integer> initialBoard = new ArrayList<>();
 
-    MPI.COMM_WORLD.Bcast(n, 0, 1, MPI.INT, 0);
-    h = 1.0 / (double) n[0];
-    sum = 0.0;
-    for (i = rank + 1; i <= n[0]; i += size) {
-      x = h * ((double) i - 0.5);
-      sum += (4.0 / (1.0 + x * x));
+    initialBoard.add(4 );initialBoard.add(8 );initialBoard.add(6 );initialBoard.add(10 );
+
+    initialBoard.add(2 );initialBoard.add(9 );initialBoard.add(5 );initialBoard.add(14 );
+
+    initialBoard.add(0 );initialBoard.add(1 );initialBoard.add(3 );initialBoard.add(11 );
+
+    initialBoard.add(13 );initialBoard.add(15 );initialBoard.add(7 );initialBoard.add(12 );
+
+    List<Integer> goalBoard = IntStream.range(1, Main.SIZE * Main.SIZE).boxed().collect(Collectors.toList());
+
+    if(me == MAIN_PROCESS) {
+      puzzleSolver(initialBoard,goalBoard,size);
     }
-    mypi[0] = h * sum;
-    MPI.COMM_WORLD.Reduce(mypi, 0, pi, 0, 1, MPI.DOUBLE, MPI.SUM, 0);
-    if (rank == 0) {
-      System.out.println("Po is approximately " + pi[0]);
-      System.out.println("Error is :" + (pi[0] - pi125dt));
+    else{
+      puzzleSolverWorker();
     }
+
     MPI.Finalize();
+  }
+
+  private static void puzzleSolver(List<Integer> initialBoard, List<Integer> goalBoard, int totalNumberOfProcesses) {
+    int numberOfWorkers = totalNumberOfProcesses - 1;
+    PriorityQueue<List<Integer>> priorityQueue = new PriorityQueue<>();
+
+  }
+
+  private static void puzzleSolverWorker() {
+
   }
 }
