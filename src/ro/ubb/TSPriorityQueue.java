@@ -13,7 +13,7 @@ public class TSPriorityQueue {
     public TSPriorityQueue(){
 
         priorityBlockingQueues = new PriorityBlockingQueue<>();
-        //hashTables = new ArrayList<>();
+        hashTables = new HashMap<>();
 
 
     }
@@ -58,26 +58,12 @@ public class TSPriorityQueue {
 
     public List<Integer> popBoard(int index){
         try {
-            locksForQueues.get(index).writeLock().lock();
-            if(priorityBlockingQueues.get(index).isEmpty()){
-                locksForQueues.get(index).writeLock().unlock();
-                return null;
-            }
-            locksForQueues.get(index).writeLock().unlock();
-            return priorityBlockingQueues.get(index).take();
+            return priorityBlockingQueues.take();
         } catch (InterruptedException e) {
             return null;
         }
 
     }
 
-//    public Board find(Board solutionBoard) {
-//        int boardHash = solutionBoard.hashCode();
-//        boardHash %= priorityBlockingQueues.size();
-//        locksForQueues.get(boardHash).readLock().lock();
-//
-//        Board board = hashTables.get(boardHash).get(solutionBoard);
-//        locksForQueues.get(boardHash).readLock().unlock();
-//        return board;
-//    }
+
 }
