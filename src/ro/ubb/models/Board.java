@@ -20,11 +20,11 @@ public class Board implements Comparable<Board> {
         {
             tiles.add(theArray[i]);
         }
-        for(int i = Main.SIZE*Main.SIZE+1; i< theArray.length; i++)
+        for(int i = Main.SIZE*Main.SIZE; i< theArray.length; i++)
         {
             path.add(theArray[i]);
         }
-        return new Board(tiles,path,theArray[Main.SIZE*Main.SIZE]);
+        return new Board(tiles,path,path.size());
     }
 
     @Override
@@ -79,9 +79,8 @@ public class Board implements Comparable<Board> {
     {
         List<Integer> dummy = new ArrayList<>();
         dummy.addAll(boardTiles);
-        dummy.add(stepsTaken);
         dummy.addAll(path);
-        int[] resultArray = new int[boardTiles.size()+path.size()+1];
+        int[] resultArray = new int[boardTiles.size()+path.size()];
         for(int i = 0; i < resultArray.length; i++)
         {
             resultArray[i] = dummy.get(i);
