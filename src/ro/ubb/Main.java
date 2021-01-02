@@ -151,9 +151,14 @@ public class Main {
 
             for (int c = 0; c < 4; c++) {
                 int newPos = gap + directions.get(c);
-                if (c < 2 && gap / SIZE == newPos / SIZE)
+                if (c < 2 && gap / SIZE == newPos / SIZE) {
                     if (newPos >= 0 && newPos < 16) {
                         count[0] += 1;
+                    }
+                }else if (c >= 2) {
+                        if (newPos >= 0 && newPos < 16) {
+                            count[0] += 1;
+                        }
                     }
             }
 
@@ -161,11 +166,17 @@ public class Main {
             length[0] += 1;
             for (int c = 0; c < 4; c++) {
                 int newPos = gap + directions.get(c);
+                if (c < 2 && gap / SIZE == newPos / SIZE) {
                 if (newPos >= 0 && newPos < 16) {
                     int swap = data[newPos];
                     data[newPos] = data[gap];
                     data[gap] = swap;
                     data[length[0] - 1] = c;
+                    MPI.COMM_WORLD.Send(length, 0, 1, MPI.INT, MAIN_PROCESS, 2);
+                    MPI.COMM_WORLD.Send(data, 0, length[0], MPI.INT, MAIN_PROCESS, 1);
+                    swap = data[newPos];
+                    data[newPos] = data[gap];
+                    data[gap] = swap;
 //          System.out.println("===");
 //          System.out.println(newPos);
 //          System.out.println(Arrays.toString(data));
@@ -176,12 +187,21 @@ public class Main {
 //            length[0] = -1;
 //            MPI.COMM_WORLD.Send(length, 0, 1, MPI.INT, MAIN_PROCESS, 2);
 //            length[0] = realLength;
-//          }
-                    MPI.COMM_WORLD.Send(length, 0, 1, MPI.INT, MAIN_PROCESS, 2);
-                    MPI.COMM_WORLD.Send(data, 0, length[0], MPI.INT, MAIN_PROCESS, 1);
-                    swap = data[newPos];
-                    data[newPos] = data[gap];
-                    data[gap] = swap;
+                }
+                }
+                else if( c >= 2){
+                    if (newPos >= 0 && newPos < 16) {
+                        int swap = data[newPos];
+                        data[newPos] = data[gap];
+                        data[gap] = swap;
+                        data[length[0] - 1] = c;
+                        MPI.COMM_WORLD.Send(length, 0, 1, MPI.INT, MAIN_PROCESS, 2);
+                        MPI.COMM_WORLD.Send(data, 0, length[0], MPI.INT, MAIN_PROCESS, 1);
+                        swap = data[newPos];
+                        data[newPos] = data[gap];
+                        data[gap] = swap;
+                }
+
                 }
             }
         }
